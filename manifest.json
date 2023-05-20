@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Tooltip Dictionary",
+  "version": "0.1",
+  "description": "Provide a tooltip for the meaning of an English word.",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

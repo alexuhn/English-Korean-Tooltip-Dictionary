@@ -1,2 +1,5 @@
-# English-Korean-Tooltip-Dictionary
-Chrome extension providing English or Korean word meanings as tooltips.
+# English-Korean Tooltip Dictionary
+
+Chrome extension providing a tooltip for the meaning of an English word.
+
+WIP
