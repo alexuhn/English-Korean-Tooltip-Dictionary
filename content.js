@@ -1,5 +1,7 @@
-let currentWord = "";
-let isShown = false;
+let shown;
+let found;
+let foundRange;
+let timer;
 
 // Reference: https://stackoverflow.com/a/49961880
 const getWordAtRange = (range) => {
@@ -15,23 +17,20 @@ const getWordAtRange = (range) => {
   if (!/^[A-Za-z]+$/.test(word)) {
     return null;
   }
-  if (word === currentWord) {
-    return currentWord;
-  }
   return word;
 };
 
-const addTooltip = (range, word) => {
-  if (isShown) {
+const addTooltip = () => {
+  if (shown == found) {
     return;
   }
-  isShown = true;
+  shown = found;
 
   const tooltip = document.createElement("div");
   tooltip.id = "tooltip-result";
-  tooltip.textContent = word;
+  tooltip.textContent = shown;
 
-  const rangeRect = range.getBoundingClientRect();
+  const rangeRect = foundRange.getBoundingClientRect();
   tooltip.style.left = `${rangeRect.left}px`;
   tooltip.style.top = `${rangeRect.bottom}px`;
   tooltip.style.position = "fixed";
@@ -51,19 +50,23 @@ const removeTooltip = () => {
     return;
   }
   tooltipElement.remove();
-  isShown = false;
+  shown = "";
 };
 
 document.addEventListener("mousemove", function (event) {
   const range = document.caretRangeFromPoint(event.clientX, event.clientY);
+  foundRange = range;
+
   const word = getWordAtRange(range);
-  if (!word) {
-    removeTooltip();
-  }
-  if (word === currentWord) {
+  if (!word || word == shown) {
     return;
   }
+
   removeTooltip();
-  currentWord = word;
-  addTooltip(range, word);
+
+  found = word;
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    addTooltip();
+  }, 300);
 });
