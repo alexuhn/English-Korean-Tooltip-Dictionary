@@ -26,22 +26,31 @@ const addTooltip = () => {
   }
   shown = found;
 
-  const tooltip = document.createElement("div");
-  tooltip.id = "tooltip-result";
-  tooltip.textContent = shown;
+  (async () => {
+    const response = await chrome.runtime.sendMessage({ word: shown });
+    const meaning = response.meaning;
+    if (!meaning) {
+      shown = "";
+      return;
+    }
 
-  const rangeRect = foundRange.getBoundingClientRect();
-  tooltip.style.left = `${rangeRect.left}px`;
-  tooltip.style.top = `${rangeRect.bottom}px`;
-  tooltip.style.position = "fixed";
-  tooltip.style.zIndex = 999999;
-  tooltip.style.backgroundColor = "#fafafa";
-  tooltip.style.fontSize = "16px";
-  tooltip.style.borderRadius = "4px";
-  tooltip.style.padding = "4px";
-  tooltip.style.boxShadow = "rgba(0, 0, 0, 0.35) 0px 5px 15px;";
+    const tooltip = document.createElement("div");
+    tooltip.id = "tooltip-result";
+    tooltip.textContent = `${shown}: ${meaning}`;
 
-  document.body.appendChild(tooltip);
+    const rangeRect = foundRange.getBoundingClientRect();
+    tooltip.style.left = `${rangeRect.left}px`;
+    tooltip.style.top = `${rangeRect.bottom}px`;
+    tooltip.style.position = "fixed";
+    tooltip.style.zIndex = 999999;
+    tooltip.style.backgroundColor = "#fafafa";
+    tooltip.style.fontSize = "16px";
+    tooltip.style.borderRadius = "4px";
+    tooltip.style.padding = "4px";
+    tooltip.style.boxShadow = "rgba(0, 0, 0, 0.35) 0px 5px 15px;";
+
+    document.body.appendChild(tooltip);
+  })();
 };
 
 const removeTooltip = () => {

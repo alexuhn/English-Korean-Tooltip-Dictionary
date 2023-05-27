@@ -6,12 +6,15 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": ["activeTab"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["*://*/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "permissions": ["activeTab"]
 }
