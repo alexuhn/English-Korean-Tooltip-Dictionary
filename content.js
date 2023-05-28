@@ -1,10 +1,9 @@
 let shown;
 let found;
-let foundRange;
 let timer;
 
 // Reference: https://stackoverflow.com/a/49961880
-const getWordAtRange = (range) => {
+const expandRange = (range) => {
   if (!range.startContainer) {
     return null;
   }
@@ -12,7 +11,10 @@ const getWordAtRange = (range) => {
     return null;
   }
   range.expand("word");
+  return range;
+};
 
+const getWordAtRange = (range) => {
   const word = range.toString().trim();
   if (word === "") {
     return null;
@@ -23,7 +25,15 @@ const getWordAtRange = (range) => {
   return word;
 };
 
-const addTooltip = () => {
+const addTooltip = (position, wordRect) => {
+  if (
+    position.x < wordRect.left ||
+    position.x > wordRect.right ||
+    position.y < wordRect.top ||
+    position.y > wordRect.bottom
+  ) {
+    return;
+  }
   if (shown == found) {
     return;
   }
@@ -41,9 +51,8 @@ const addTooltip = () => {
     tooltip.id = "tooltip-result";
     tooltip.textContent = `${shown}: ${meaning}`;
 
-    const rangeRect = foundRange.getBoundingClientRect();
-    tooltip.style.left = `${rangeRect.left}px`;
-    tooltip.style.top = `${rangeRect.bottom}px`;
+    tooltip.style.left = `${wordRect.left}px`;
+    tooltip.style.top = `${wordRect.bottom}px`;
     tooltip.style.position = "fixed";
     tooltip.style.zIndex = 999999;
     tooltip.style.backgroundColor = "#fafafa";
@@ -70,9 +79,13 @@ document.addEventListener("mousemove", function (event) {
   if (!range) {
     return;
   }
-  foundRange = range;
 
-  const word = getWordAtRange(range);
+  const wordRange = expandRange(range);
+  if (!wordRange) {
+    return;
+  }
+
+  const word = getWordAtRange(wordRange);
   if (!word || word == shown) {
     return;
   }
@@ -82,7 +95,10 @@ document.addEventListener("mousemove", function (event) {
   found = word;
   clearTimeout(timer);
   timer = setTimeout(() => {
-    addTooltip();
+    addTooltip(
+      { x: event.clientX, y: event.clientY },
+      wordRange.getBoundingClientRect()
+    );
   }, 300);
 });
 
