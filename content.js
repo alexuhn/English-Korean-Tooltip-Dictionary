@@ -79,3 +79,7 @@ document.addEventListener("mousemove", function (event) {
     addTooltip();
   }, 300);
 });
+
+document.addEventListener("scroll", () => {
+  removeTooltip();
+});
