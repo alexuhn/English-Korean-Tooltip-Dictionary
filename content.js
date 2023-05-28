@@ -5,6 +5,9 @@ let timer;
 
 // Reference: https://stackoverflow.com/a/49961880
 const getWordAtRange = (range) => {
+  if (!range.startContainer) {
+    return null;
+  }
   if (range.startContainer.nodeType !== Node.TEXT_NODE) {
     return null;
   }
@@ -64,6 +67,9 @@ const removeTooltip = () => {
 
 document.addEventListener("mousemove", function (event) {
   const range = document.caretRangeFromPoint(event.clientX, event.clientY);
+  if (!range) {
+    return;
+  }
   foundRange = range;
 
   const word = getWordAtRange(range);
