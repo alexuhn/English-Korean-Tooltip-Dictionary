@@ -1,5 +1,5 @@
-let shown;
-let found;
+let shownWord;
+let foundWord;
 let timer;
 
 // Reference: https://stackoverflow.com/a/49961880
@@ -25,31 +25,38 @@ const getWordAtRange = (range) => {
   return word;
 };
 
+const notInWordRect = (position, rect) => {
+  if (!rect) {
+    return false;
+  }
+  return (
+    position.x < rect.left ||
+    position.x > rect.right ||
+    position.y < rect.top ||
+    position.y > rect.bottom
+  );
+};
+
 const addTooltip = (position, wordRect) => {
-  if (
-    position.x < wordRect.left ||
-    position.x > wordRect.right ||
-    position.y < wordRect.top ||
-    position.y > wordRect.bottom
-  ) {
+  if (notInWordRect(position, wordRect)) {
     return;
   }
-  if (shown == found) {
+  if (shownWord == foundWord) {
     return;
   }
-  shown = found;
+  shownWord = foundWord;
 
   (async () => {
-    const response = await chrome.runtime.sendMessage({ word: shown });
+    const response = await chrome.runtime.sendMessage({ word: shownWord });
     const meaning = response.meaning;
     if (!meaning) {
-      shown = "";
+      shownWord = "";
       return;
     }
 
     const tooltip = document.createElement("div");
     tooltip.id = "tooltip-result";
-    tooltip.textContent = `${shown}: ${meaning}`;
+    tooltip.textContent = `${shownWord}: ${meaning}`;
 
     tooltip.style.left = `${wordRect.left}px`;
     tooltip.style.top = `${wordRect.bottom}px`;
@@ -71,7 +78,7 @@ const removeTooltip = () => {
     return;
   }
   tooltipElement.remove();
-  shown = "";
+  shownWord = null;
 };
 
 document.addEventListener("mousemove", function (event) {
@@ -85,23 +92,24 @@ document.addEventListener("mousemove", function (event) {
     return;
   }
 
-  const word = getWordAtRange(wordRange);
-  if (!word || word == shown) {
-    return;
+  const position = { x: event.clientX, y: event.clientY };
+  const wordRect = wordRange.getBoundingClientRect();
+  if (shownWord && notInWordRect(position, wordRect)) {
+    removeTooltip();
   }
 
-  removeTooltip();
+  const word = getWordAtRange(wordRange);
+  if (!word || word == shownWord) {
+    return;
+  }
+  foundWord = word;
 
-  found = word;
   clearTimeout(timer);
   timer = setTimeout(() => {
-    addTooltip(
-      { x: event.clientX, y: event.clientY },
-      wordRange.getBoundingClientRect()
-    );
+    addTooltip(position, wordRect);
   }, 300);
 });
 
 document.addEventListener("scroll", () => {
-  removeTooltip();
+  shownWord !== "" && removeTooltip();
 });
