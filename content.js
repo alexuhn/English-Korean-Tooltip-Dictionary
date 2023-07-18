@@ -47,7 +47,9 @@ const addTooltip = (position, wordRect) => {
   shownWord = foundWord;
 
   (async () => {
-    const response = await chrome.runtime.sendMessage({ word: shownWord });
+    const response = await chrome.runtime.sendMessage({
+      word: shownWord.toLowerCase(),
+    });
     const meaning = response.meaning;
     if (!meaning) {
       shownWord = "";
