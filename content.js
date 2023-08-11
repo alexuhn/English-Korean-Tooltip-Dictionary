@@ -4,14 +4,19 @@ let timer;
 
 // Reference: https://stackoverflow.com/a/49961880
 const expandRange = (range) => {
-  if (!range.startContainer) {
+  if (
+    !range.startContainer ||
+    range.startContainer.nodeType !== Node.TEXT_NODE
+  ) {
     return null;
   }
-  if (range.startContainer.nodeType !== Node.TEXT_NODE) {
+
+  try {
+    range.expand("word");
+    return range;
+  } catch {
     return null;
   }
-  range.expand("word");
-  return range;
 };
 
 const getWordAtRange = (range) => {
