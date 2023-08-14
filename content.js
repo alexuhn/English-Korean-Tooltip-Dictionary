@@ -65,7 +65,6 @@ const addTooltip = (position, wordRect) => {
     tooltip.id = "tooltip-result";
     tooltip.textContent = `${shownWord}: ${meaning}`;
 
-    tooltip.style.left = `${wordRect.left}px`;
     tooltip.style.top = `${wordRect.bottom}px`;
     tooltip.style.position = "fixed";
     tooltip.style.zIndex = 999999;
@@ -74,8 +73,20 @@ const addTooltip = (position, wordRect) => {
     tooltip.style.borderRadius = "4px";
     tooltip.style.padding = "4px";
     tooltip.style.boxShadow = "rgba(0, 0, 0, 0.35) 0px 5px 15px;";
+    tooltip.style.whiteSpace = "nowrap";
+    // Temporarily hide the tooltip to measure its width without displaying it.
+    tooltip.style.visibility = "hidden";
 
     document.body.appendChild(tooltip);
+
+    // Position the tooltip to ensure the text does not wrap into multiple lines.
+    if (tooltip.offsetWidth + wordRect.left > window.innerWidth) {
+      tooltip.style.right = "4px";
+    } else {
+      tooltip.style.left = `${wordRect.left}px`;
+    }
+    // Make the tooltip visible after positioning it correctly.
+    tooltip.style.visibility = "visible";
   })();
 };
 
