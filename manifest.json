@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Tooltip Dictionary",
   "version": "0.1",
-  "description": "Provide a tooltip for the meaning of an English word.",
+  "description": "Provide a tooltip for the Korean meaning of an English word.",
   "action": {
     "default_popup": "index.html"
   },
