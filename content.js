@@ -70,6 +70,7 @@ const addTooltip = (position, wordRect) => {
     tooltip.style.zIndex = 999999;
     tooltip.style.backgroundColor = "#fafafa";
     tooltip.style.fontSize = "16px";
+    tooltip.style.fontFamily = "Pretendard";
     tooltip.style.borderRadius = "4px";
     tooltip.style.padding = "4px";
     tooltip.style.boxShadow = "rgba(0, 0, 0, 0.35) 0px 5px 15px;";
